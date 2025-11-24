@@ -1,0 +1,41 @@
+name: 🐛 Bug
+description: Report a crash, visual error, or unexpected behavior during development.
+title: "[Bug] [Error/Issue Name]"
+labels: ["type: bug"]
+
+body:
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Local
+        - Production
+        - Preview
+    validations:
+      required: true
+
+  - type: input
+    id: component
+    attributes:
+      label: Affected Component/Route
+      description: e.g., `app/login/page.tsx` or `Navbar`
+    validations:
+      required: true
+
+  - type: textarea
+    id: error_log
+    attributes:
+      label: Terminal/Console Output
+      description: Paste the stack trace or error message here.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description & Reproduction
+      description: What happens vs. what should happen?
+    validations:
+      required: true

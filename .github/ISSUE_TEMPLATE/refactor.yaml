@@ -1,0 +1,43 @@
+name: ♻️ Code Refactor
+description: Improve code quality, directory structure, or logic without changing UI.
+title: "[Refactor] Optimize [Component/Hook Name]"
+labels: ["type: refactor"]
+
+body:
+  - type: input
+    id: target_file
+    attributes:
+      label: Target File / Directory
+      description: Path to the file (e.g., `components/dashboard/Sidebar.tsx`).
+    validations:
+      required: true
+
+  - type: dropdown
+    id: refactor_goal
+    attributes:
+      label: Primary Goal
+      options:
+        - Improve Readability / Clean Code
+        - Extract Logic to Custom Hook
+        - Convert Client Component to Server Component
+        - Fix TypeScript Types / Interfaces
+        - Performance (Reduce Re-renders)
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation (The "Why")
+      description: Why touch this code? (e.g., "The component is 500 lines long," or "Hardcoded values used instead of constants").
+    validations:
+      required: true
+
+  - type: textarea
+    id: plan
+    attributes:
+      label: Technical Approach
+      description: Briefly explain how you will refactor it.
+      placeholder: "I will split the sub-sections into smaller components and move the state logic into `useDashboard.ts`."
+    validations:
+      required: true

@@ -1,0 +1,37 @@
+name: 🚀 New Feature
+description: Propose a new page, component, or integration for the Next.js app.
+title: "[Feat] Implement [Feature Name]"
+labels: ["type: feature"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Frontend Feature Request
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 🎯 User Story & Goal
+      description: What is the user trying to accomplish? Why is this feature needed? (e.g., "As a user, I want to see my profile details so I can update my email.")
+      placeholder: As a user, I want to... so that I can...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 💻 Scope & Components
+      description: Briefly describe the new pages, components, or API calls involved.
+      placeholder: e.g., Requires a new `/settings/profile` page. Uses the existing <Input> component. Calls the GET /api/user endpoint.
+    validations:
+      required: false
+
+  - type: textarea
+    id: technical_notes
+    attributes:
+      label: 💡 Additional Notes
+      description: Are there any known challenges, dependencies (e.g., a pending backend change), or specific designs to reference?
+      placeholder: (Optional) Mention any known constraints or links to design files.
+    validations:
+      required: false

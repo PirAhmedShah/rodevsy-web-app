@@ -1,0 +1,50 @@
+name: 🎨 UI / UX Polish
+description: Fix styling, alignment, responsiveness, or visual consistency.
+title: "[UI] Fix [Component/Page] styling"
+labels: ["type: ui"]
+
+body:
+  - type: input
+    id: route_url
+    attributes:
+      label: Affected Route / Page
+      description: e.g. `/dashboard/settings`
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ui_category
+    attributes:
+      label: Polish Category
+      options:
+        - Mobile Responsiveness / Breakpoints
+        - Spacing / Alignment (Margin/Padding)
+        - Colors / Dark Mode
+        - Typography / Fonts
+        - Animation / Transitions
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual_issue
+    attributes:
+      label: Visual Issue
+      description: What looks wrong? (e.g., "Button padding is too tight on mobile" or "Wrong shade of blue").
+    validations:
+      required: true
+
+  - type: input
+    id: design_ref
+    attributes:
+      label: Design Reference
+      description: Link to Figma frame or screenshot of how it SHOULD look.
+    validations:
+      required: false
+      
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Drag and drop a screenshot of the current issue here.
+    validations:
+      required: false

@@ -1,0 +1,22 @@
+name: 🔧 Config & Maintenance
+description: Setup tooling, update packages, or modify environment configs.
+title: "[Chore] Setup/Update [Tool Name]"
+labels: ["type: chore"]
+
+body:
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: "e.g. linter, dependency install, CI, environment, config"
+      placeholder: "Enter a short category (e.g. linter, dependency)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Configuration Details
+      description: What specific setting or package needs attention?
+    validations:
+      required: true
