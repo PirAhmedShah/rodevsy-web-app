@@ -1,4 +1,4 @@
-name: ♻️ Code Refactor
+name: Code Refactor
 description: Improve code quality, directory structure, or logic without changing UI.
 title: "[Refactor] Optimize [Component/Hook Name]"
 labels: ["type: refactor"]

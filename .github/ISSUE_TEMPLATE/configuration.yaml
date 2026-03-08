@@ -1,4 +1,4 @@
-name: 🔧 Config & Maintenance
+name: Config & Maintenance
 description: Setup tooling, update packages, or modify environment configs.
 title: "[Chore] Setup/Update [Tool Name]"
 labels: ["type: chore"]

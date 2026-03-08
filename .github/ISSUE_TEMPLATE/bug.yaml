@@ -1,4 +1,4 @@
-name: 🐛 Bug
+name: Bug
 description: Report a crash, visual error, or unexpected behavior during development.
 title: "[Bug] [Error/Issue Name]"
 labels: ["type: bug"]

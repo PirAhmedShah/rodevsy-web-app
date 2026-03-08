@@ -1,4 +1,4 @@
-name: 🎨 UI / UX Polish
+name: UI / UX Polish
 description: Fix styling, alignment, responsiveness, or visual consistency.
 title: "[UI] Fix [Component/Page] styling"
 labels: ["type: ui"]
