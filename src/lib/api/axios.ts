@@ -1,111 +1,112 @@
 // src/lib/api/axios.ts
-import axios, { 
-  type InternalAxiosRequestConfig, 
-  type AxiosError, 
-  type AxiosResponse 
-} from 'axios';
-import { type refereshResponse } from '$lib/types/auth.type.js';
-import { setAuth } from '$lib/state/auth.svelte.js';
+import axios, { type InternalAxiosRequestConfig, type AxiosError, type AxiosResponse } from 'axios';
+import type { refereshResponse } from '$lib/types/auth.type.js';
 
+// ── Access token store ───────────────────────────────────────────
 let accessToken: string | null = null;
 
+export const getAccessToken = (): string | null => accessToken;
+
 export const setAccessToken = (token: string | null): void => {
-    console.log("Setting access token");
-    console.log(token)
-  accessToken = token;
+	accessToken = token;
 };
 
+// ── Axios instance ───────────────────────────────────────────────
 export const api = axios.create({
-  baseURL: 'http://localhost:80',
-  withCredentials: true 
+	baseURL: import.meta.env.PROD ? 'https://api.rodevsy.app' : 'http://localhost:80',
+	withCredentials: true
 });
 
-// --- REQUEST INTERCEPTOR ---
+// ── Request interceptor — attach access token ────────────────────
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // config.headers can be undefined in older Axios versions, but it's safe to check
-    if (accessToken && config.headers) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error: AxiosError) => Promise.reject(error)
+	(config: InternalAxiosRequestConfig) => {
+		if (accessToken && config.headers) {
+			config.headers['Authorization'] = `Bearer ${accessToken}`;
+		}
+		return config;
+	},
+	(error: AxiosError) => Promise.reject(error)
 );
 
-// --- RESPONSE INTERCEPTOR ---
-let isRefreshing = false;
-
-// Define the shape of our queue items
-interface QueueItem {
-  resolve: (value: string | null) => void;
-  reject: (reason?: unknown) => void;
+// ── Response interceptor — silent token refresh on 401 ───────────
+interface RetryableConfig extends InternalAxiosRequestConfig {
+	_retry?: boolean;
 }
 
+interface QueueItem {
+	resolve: (token: string | null) => void;
+	reject: (reason: unknown) => void;
+}
+
+let isRefreshing = false;
 let failedQueue: QueueItem[] = [];
 
-const processQueue = (error: AxiosError | null, token: string | null = null): void => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
+const flushQueue = (error: unknown, token: string | null): void => {
+	failedQueue.forEach((item) => (error ? item.reject(error) : item.resolve(token)));
+	failedQueue = [];
 };
 
-// Extend Axios config to recognize our custom retry flag
-interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean;
-}
+const isRefreshRequest = (config?: InternalAxiosRequestConfig): boolean =>
+	!!config?.url?.includes('/auth/refresh');
 
 api.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as CustomAxiosRequestConfig;
+	(response: AxiosResponse) => response,
+	async (error: AxiosError) => {
+		const originalRequest = error.config as RetryableConfig | undefined;
+		const status = error.response?.status;
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      originalRequest._retry = true;
+		// Don't intercept non-401s or missing config
+		if (status !== 401 || !originalRequest) {
+			return Promise.reject(error);
+		}
 
-      if (isRefreshing) {
-        return new Promise<string | null>((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-        .then(token => {
-          if (originalRequest.headers) {
-             originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          }
-          return api(originalRequest);
-        })
-        .catch(err => Promise.reject(err));
-      }
+		// ── Refresh endpoint itself failed — session is dead ─────────
+		if (isRefreshRequest(originalRequest)) {
+			setAccessToken(null);
+			flushQueue(error, null);
+			return Promise.reject(error);
+		}
 
-      isRefreshing = true;
+		// ── Already retried this request — don't loop ────────────────
+		if (originalRequest._retry) {
+			return Promise.reject(error);
+		}
 
-      try {
+		// ── Another refresh already in flight — queue this request ───
+		if (isRefreshing) {
+			return new Promise((resolve, reject) => {
+				failedQueue.push({
+					resolve: (token) => {
+						if (originalRequest.headers) {
+							originalRequest.headers['Authorization'] = `Bearer ${token}`;
+						}
+						resolve(api(originalRequest));
+					},
+					reject
+				});
+			});
+		}
 
-        const {data} = await api.post<refereshResponse>('/auth/refresh');
-        const newToken = data;
-        setAccessToken(newToken);
-        setAuth(true);
+		// ── Kick off a refresh ───────────────────────────────────────
+		originalRequest._retry = true;
+		isRefreshing = true;
 
-        processQueue(null, newToken);
-        
-        if (originalRequest.headers) {
-           originalRequest.headers['Authorization'] = 'Bearer ' + newToken;
-        }
-        return api(originalRequest);
-        
-      } catch (refreshError) {
-        processQueue(refreshError as AxiosError, null);
-        setAccessToken(null);
-        setAuth(false);
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
-    }
+		try {
+			const { data } = await api.post<refereshResponse>('/auth/refresh');
+			setAccessToken(data);
 
-    return Promise.reject(error);
-  }
+			if (originalRequest.headers) {
+				originalRequest.headers['Authorization'] = `Bearer ${data}`;
+			}
+
+			flushQueue(null, data);
+			return api(originalRequest);
+		} catch (refreshError) {
+			setAccessToken(null);
+			flushQueue(refreshError, null);
+			return Promise.reject(refreshError);
+		} finally {
+			isRefreshing = false;
+		}
+	}
 );

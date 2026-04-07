@@ -1,13 +1,13 @@
-// src/lib/state/auth.svelte.js
-
+// src/lib/state/auth.svelte.ts
 interface AuthState {
-  isAuthenticated: boolean
+	isAuthenticated: boolean | null; // null = not yet checked
 }
 
-export const authState:AuthState = $state({
-  isAuthenticated: false
+export const authState: AuthState = $state({
+	isAuthenticated: null
 });
 
-export function setAuth(isAuthenticated:boolean) {
-    authState.isAuthenticated = isAuthenticated;
+export function setAuth(isAuthenticated: boolean) {
+	console.log(`Auth Updated to ${isAuthenticated}`);
+	authState.isAuthenticated = isAuthenticated;
 }

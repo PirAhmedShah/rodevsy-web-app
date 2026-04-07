@@ -2,6 +2,7 @@
 	"files.associations": {
 		"*.css": "tailwindcss"
 	},
+	"editor.formatOnSave": true,
 	"typescript.preferences.importModuleSpecifierEnding": "minimal",
   "javascript.preferences.importModuleSpecifierEnding": "minimal"
 }

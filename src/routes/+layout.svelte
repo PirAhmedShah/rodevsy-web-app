@@ -1,14 +1,17 @@
 <script lang="ts">
 	import './layout.css';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import { ModeWatcher } from 'mode-watcher';
-	import { initializeApp } from '$lib/services/auth.service.js';
+	import { onMount } from 'svelte';
+	import { initializeApp } from '$lib/services/auth.service';
+
 	let { children } = $props();
 
-	initializeApp();
+	onMount(() => {
+		void initializeApp();
+	});
 </script>
 
 <ModeWatcher />
 <Toaster />
-
-{@render children?.()}
+{@render children()}

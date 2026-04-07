@@ -1,44 +1,35 @@
-// src/lib/services/authService.ts
-import { api, setAccessToken } from '../api/axios.js';
-import { setAuth } from '../state/auth.svelte.js';
-import { type LoginPayload, type loginResponse, type refereshResponse, type SignupPayload, type signupResponse } from '$lib/types/auth.type.js';
+// src/lib/services/auth.service.ts
+import { api, setAccessToken } from '../api/axios';
+import { setAuth } from '../state/auth.svelte';
+import type { LoginPayload, refereshResponse, SignupPayload } from '$lib/types/auth.type';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
-
 export async function login(payload: LoginPayload): Promise<void> {
-    const { data } = await api.post<loginResponse>('/auth/login', payload);
-
-    setAccessToken(data.accessToken);
-    setAuth(true);
+	await api.post('/auth/login', payload);
+	window.location.href = resolve('/dashboard/');
 }
 
 export async function signup(payload: SignupPayload): Promise<void> {
-    await api.post<signupResponse>('/auth/signup', payload);
-    goto(resolve('/login'))
+	await api.post('/auth/signup', payload);
+	goto(resolve('/login/'));
 }
 
 export async function logout(): Promise<void> {
-    await api.post<signupResponse>('/auth/logout', {});
-    setAccessToken(null);
-    setAuth(false);
-    goto(resolve('/login'))
+	await api.post('/auth/logout', {});
+	setAccessToken(null);
+	setAuth(false);
+	goto(resolve('/login/'));
 }
 
-
-
-
-export async function initializeApp(): Promise<void> {
-    try {
-      const {data} = await api.post<refereshResponse>('/auth/refresh');
-        const newToken = data;
-        setAccessToken(newToken);
-        setAuth(true);
-        
-    } catch {
-        // Error handling (e.g., no active session found)
-        console.debug('No active session found during initialization.');
-    } finally {
-        // authState.isInitialized = true;
-    }
+export async function initializeApp() {
+	try {
+		await new Promise((res) => setTimeout(res, Math.random() * 1500 + 500));
+		const { data } = await api.post<refereshResponse>('/auth/refresh');
+		setAccessToken(data);
+		setAuth(true);
+	} catch {
+		console.debug('No active session found during initialization.');
+		setAuth(false); // explicitly set false, not null, so isLoading stops
+	}
 }

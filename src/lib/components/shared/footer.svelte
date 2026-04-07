@@ -2,7 +2,7 @@
 	import Twitter from "@lucide/svelte/icons/twitter";
 	import Github from "@lucide/svelte/icons/github";
 	import Linkedin from "@lucide/svelte/icons/linkedin";
-	import { resolve } from "$app/paths";
+	import { resolve,base } from "$app/paths";
 
 	const currentYear = new Date().getFullYear();
 	
@@ -10,23 +10,23 @@
 		{
 			title: "Product",
 			links: [
-				{ label: "Marketplace", href: "/marketplace" },
-				{ label: "Talent", href: "/talent" },
-				{ label: "Projects", href: "/projects" },
+				{ label: "Marketplace", href: "/marketplace/" },
+				{ label: "Talent", href: "/talent/" },
+				{ label: "Projects", href: "/projects/" },
 			]
 		},
 		{
 			title: "Support",
 			links: [
-				{ label: "Forum", href: "/forum" },
-				{ label: "Guidelines", href: "/docs" }
+				{ label: "Forum", href: "/forum/" },
+				{ label: "Guidelines", href: "/docs/" }
 			]
 		},
 		{
 			title: "Legal",
 			links: [
-				{ label: "Terms", href: "/terms" },
-				{ label: "Privacy", href: "/privacy" }
+				{ label: "Terms", href: "/terms/" },
+				{ label: "Privacy", href: "/privacy/" }
 			]
 		}
 	] as const;
@@ -38,7 +38,7 @@
 			<div class="space-y-6">
 				<a href={resolve('/')} class="flex items-center space-x-2">
 					<div class="flex h-8 w-8 items-center justify-center rounded-lg">
-						<img src="/icons/logo.svg" alt="logo"/>
+						<img src="{base}/icons/logo.svg" alt="logo"/>
 					</div>
 					<span class="font-bold tracking-tighter text-xl uppercase">RODEVSY</span>
 				</a>
@@ -76,7 +76,7 @@
 			<p class="text-xs text-muted-foreground">
 				&copy; {currentYear} RoDevsy. All rights reserved.
 			</p>
-			<a href={resolve('/docs')} class="text-xs text-muted-foreground mt-4 md:mt-0">
+			<a href={resolve('/docs/')} class="text-xs text-muted-foreground mt-4 md:mt-0">
 				Cookie Preferences
 			</a>
 		</div>

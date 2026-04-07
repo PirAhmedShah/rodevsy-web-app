@@ -1,24 +1,25 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button';
 	import Typewriter from '$lib/components/shared/typewriter.svelte';
 
-	// Direct Icon Imports for optimal tree-shaking
-	import Briefcase from '@lucide/svelte/icons/briefcase';
-	import ShieldCheck from '@lucide/svelte/icons/shield-check';
-	import Zap from '@lucide/svelte/icons/zap';
-	import ChevronRight from '@lucide/svelte/icons/chevron-right';
-	import CheckCircle2 from '@lucide/svelte/icons/check-circle-2';
-	import Lock from '@lucide/svelte/icons/lock';
-	import Coins from '@lucide/svelte/icons/coins';
-	import XCircle from '@lucide/svelte/icons/x-circle';
-	import MessageSquare from '@lucide/svelte/icons/message-square';
-	import Code2 from '@lucide/svelte/icons/code-2';
-	import Users from '@lucide/svelte/icons/users';
-	import LayoutGrid from '@lucide/svelte/icons/layout-grid';
-	import Hammer from '@lucide/svelte/icons/hammer';
-	import Scale from '@lucide/svelte/icons/scale';
-	import Star from '@lucide/svelte/icons/star';
-	import HelpCircle from '@lucide/svelte/icons/help-circle';
+	import {
+		Briefcase,
+		ShieldCheck,
+		Zap,
+		ChevronRight,
+		CircleCheck,
+		Lock,
+		Coins,
+		CircleX,
+		MessageSquare,
+		Code,
+		Users,
+		LayoutGrid,
+		Hammer,
+		Scale,
+		Star,
+		HelpCircle
+	} from '@lucide/svelte';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 	import { resolve } from '$app/paths';
 
@@ -33,10 +34,10 @@
 	];
 
 	const platformStats = [
-		{ label: 'Registered Users', value: '1,024+' },
-		{ label: 'Projects Secured', value: '$50k+' },
-		{ label: 'Assets Listed', value: '340' },
-		{ label: 'Dispute Rate', value: '< 1%' }
+		{ label: 'Registered Users', value: '1' },
+		{ label: 'Projects Secured', value: '$0' },
+		{ label: 'Assets Listed', value: '0' },
+		{ label: 'Dispute Rate', value: '0%' }
 	];
 
 	const ecosystemFeatures = [
@@ -44,28 +45,28 @@
 			icon: Briefcase,
 			title: 'Projects',
 			desc: 'Post your game requirements. Developers bid, you select the best fit, and we secure the funds until completion.',
-			href: '/projects',
+			href: '/projects/',
 			linkText: 'Post a Project'
 		},
 		{
 			icon: Users,
 			title: 'Talent Directory',
 			desc: 'Browse vetted profiles of scripters, builders, and UI designers. Check their real completion rate and verified reviews.',
-			href: '/talent',
+			href: '/talent/',
 			linkText: 'Hire Developers'
 		},
 		{
 			icon: LayoutGrid,
 			title: 'Marketplace',
 			desc: 'Buy and sell ready-made scripts, maps, and models instantly. Auto-delivery using your in-platform Credits.',
-			href: '/marketplace',
+			href: '/marketplace/',
 			linkText: 'Browse Assets'
 		},
 		{
 			icon: MessageSquare,
 			title: 'Community Forum',
 			desc: "Engage in discussions, ask technical questions, share dev-logs, and build your studio's reputation publicly.",
-			href: '/forum',
+			href: '/forum/',
 			linkText: 'Join Discussion'
 		}
 	] as const;
@@ -153,9 +154,9 @@
 {#snippet checkItem(text: string, isNegative: boolean = false)}
 	<li class="flex items-start gap-3 text-sm font-medium text-muted-foreground sm:text-base">
 		{#if isNegative}
-			<XCircle class="mt-0.5 size-5 shrink-0 text-destructive/80" />
+			<CircleX class="mt-0.5 size-5 shrink-0 text-destructive/80" />
 		{:else}
-			<CheckCircle2 class="mt-0.5 size-5 shrink-0 text-primary" />
+			<CircleCheck class="mt-0.5 size-5 shrink-0 text-primary" />
 		{/if}
 		<span>{text}</span>
 	</li>
@@ -164,7 +165,7 @@
 <main class="min-h-screen w-full bg-background text-foreground selection:bg-primary/30">
 	<section class="relative flex min-h-[90vh] items-center pt-20 pb-16">
 		<div
-			class="animate-pulse duration-5000 absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px]"
+			class="absolute inset-0 z-0 animate-pulse bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px] duration-5000"
 		></div>
 		<div
 			class="absolute inset-x-0 top-0 -z-10 mx-auto size-125 rounded-full bg-primary/20 opacity-50 blur-[100px]"
@@ -200,14 +201,14 @@
 
 					<div class="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
 						<Button
-							href="/signup"
+							href={resolve('/signup/')}
 							size="lg"
 							class="h-14 w-full px-8 text-base shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] sm:w-auto"
 						>
 							Start Earning Safely
 						</Button>
 						<Button
-							href="/marketplace"
+							href={resolve('/marketplace/')}
 							variant="secondary"
 							size="lg"
 							class="h-14 w-full px-8 text-base sm:w-auto"
@@ -257,7 +258,7 @@
 									<div
 										class="flex size-10 shrink-0 items-center justify-center rounded-full border border-green-500/20 bg-green-500/10"
 									>
-										<CheckCircle2 class="size-5 text-green-500" />
+										<CircleCheck class="size-5 text-green-500" />
 									</div>
 									<div>
 										<p class="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
@@ -295,7 +296,7 @@
 	<section class="border-y border-border bg-muted/30 py-8 backdrop-blur-sm">
 		<div class="container mx-auto px-4 sm:px-6 lg:px-8">
 			<div class="grid grid-cols-2 gap-8 divide-x divide-border/50 md:grid-cols-4">
-				{#each platformStats as stat,i (i)}
+				{#each platformStats as stat, i (i)}
 					<div class="flex flex-col items-center justify-center px-4 text-center">
 						<span class="text-3xl font-bold tracking-tight text-foreground">{stat.value}</span>
 						<span class="mt-1 text-sm font-medium text-muted-foreground">{stat.label}</span>
@@ -318,7 +319,7 @@
 			</div>
 
 			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-				{#each ecosystemFeatures as feature,i (i)}
+				{#each ecosystemFeatures as feature, i (i)}
 					<div
 						class="group relative flex flex-col justify-between rounded-2xl border border-border bg-card p-8 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10"
 					>
@@ -411,7 +412,7 @@
 						</div>
 						<h3 class="mb-6 text-2xl font-bold text-foreground">The RoDevsy Way</h3>
 						<ul class="space-y-5">
-							{#each rodevsyPros as pro,i (i)}
+							{#each rodevsyPros as pro, i (i)}
 								{@render checkItem(pro)}
 							{/each}
 						</ul>
@@ -438,7 +439,7 @@
 							<div
 								class="mt-1 flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
 							>
-								<Code2 class="size-5" />
+								<Code class="size-5" />
 							</div>
 							<div>
 								<h4 class="text-xl font-bold">Strict Escrow Protocol</h4>
@@ -502,7 +503,7 @@
 			</div>
 
 			<div class="grid gap-6 md:grid-cols-3">
-				{#each testimonials as review,i (i)}
+				{#each testimonials as review, i (i)}
 					<div class="rounded-2xl border border-border bg-background p-8 shadow-sm">
 						<div class="mb-4 flex text-amber-500">
 							{#each Array(5)}
@@ -528,7 +529,7 @@
 			</div>
 
 			<div class="grid gap-6 md:grid-cols-2">
-				{#each faqs as faq,i (i)}
+				{#each faqs as faq, i (i)}
 					<div class="rounded-xl border border-border bg-muted/20 p-6">
 						<h4 class="mb-2 font-bold text-foreground">{faq.q}</h4>
 						<p class="text-sm text-muted-foreground">{faq.a}</p>
@@ -539,9 +540,7 @@
 	</section>
 
 	<section class="relative flex h-dvh items-center bg-primary">
-		<div
-			class="absolute inset-0 bg-[url('/images/cubes.png')] opacity-25 dark:invert"
-		></div>
+		<div class="absolute inset-0 bg-[url('/images/cubes.png')] opacity-25 dark:invert"></div>
 		<div class="relative z-10 container mx-auto px-4 text-center sm:px-6 lg:px-8">
 			<h2 class="mb-6 text-3xl font-bold tracking-tight text-primary-foreground sm:text-5xl">
 				Ready to professionalize your studio?
@@ -553,17 +552,16 @@
 
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
 				<Button
-					href="/signup"
+					href={resolve('/signup/')}
 					size="lg"
-					variant="secondary"
-					class="h-14 px-8 text-lg font-semibold text-primary"
+					class="h-14 bg-primary-foreground px-8 text-lg font-semibold text-primary hover:bg-primary-foreground/70"
 				>
 					Create Free Account
 				</Button>
 				<Button
-					href="/docs"
+					href={resolve('/docs/')}
 					size="lg"
-					class="h-14 border-transparent bg-primary-foreground/10 px-8 text-lg font-semibold text-primary-foreground hover:bg-primary-foreground/20"
+					class="h-14 border-transparent px-8 text-lg font-semibold text-primary-foreground hover:bg-transparent hover:text-primary-foreground/70"
 				>
 					Read Documentation
 				</Button>
