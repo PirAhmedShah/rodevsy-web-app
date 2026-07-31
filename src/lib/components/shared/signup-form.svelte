@@ -94,7 +94,7 @@
 			else if (lower.includes('username')) fieldErrors.username = msg;
 			else if (lower.includes('email')) fieldErrors.email = msg;
 			else if (lower.includes('password')) fieldErrors.password = msg;
-			else if (lower.includes('dob') || lower.includes('birth')) fieldErrors.dob = msg;
+			else if (lower.includes('dob') || lower.includes('birth')) fieldErrors.dateOfBirth = msg;
 			else if (lower.includes('type') || lower.includes('role')) fieldErrors.type = msg;
 			else if (lower.includes('gender')) fieldErrors.gender = msg;
 			else fieldErrors.general = msg;
@@ -261,19 +261,19 @@
 			</Field>
 
 			<Field>
-				<FieldLabel for="dob-{id}">Date of Birth</FieldLabel>
+				<FieldLabel for="dateOfBirth-{id}">Date of Birth</FieldLabel>
 				<Input
-					id="dob-{id}"
-					name="dob"
+					id="dateOfBirth-{id}"
+					name="dateOfBirth"
 					type="date"
 					max={maxDate}
 					min={minDate}
-					aria-invalid={!!errors.dob}
-					onchange={() => clearError('dob')}
+					aria-invalid={!!errors.dateOfBirth}
+					onchange={() => clearError('dateOfBirth')}
 					required
 				/>
-				{#if errors.dob}
-					<p class="text-xs text-destructive">{errors.dob}</p>
+				{#if errors.dateOfBirth}
+					<p class="text-xs text-destructive">{errors.dateOfBirth}</p>
 				{/if}
 			</Field>
 		</div>

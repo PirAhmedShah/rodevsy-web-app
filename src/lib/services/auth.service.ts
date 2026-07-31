@@ -1,7 +1,9 @@
 // src/lib/services/auth.service.ts
 import { api, setAccessToken } from '../api/axios';
 import { setAuth } from '../state/auth.svelte';
-import type { LoginPayload, refereshResponse, SignupPayload } from '$lib/types/auth.type';
+import { setUser, clearUser } from '../state/user.svelte';
+import { getProfile } from './users.service';
+import type { LoginPayload, RefreshResponse, SignupPayload } from '$lib/types/auth.type';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
@@ -19,15 +21,20 @@ export async function logout(): Promise<void> {
 	await api.post('/auth/logout', {});
 	setAccessToken(null);
 	setAuth(false);
+	clearUser();
 	goto(resolve('/login/'));
 }
 
 export async function initializeApp() {
 	try {
 		await new Promise((res) => setTimeout(res, Math.random() * 1500 + 500));
-		const { data } = await api.post<refereshResponse>('/auth/refresh');
+		const { data } = await api.post<RefreshResponse>('/auth/refresh');
 		setAccessToken(data);
 		setAuth(true);
+
+		// Fetch the authenticated user's profile so the app starts with fresh state
+		const profile = await getProfile();
+		setUser(profile);
 	} catch {
 		console.debug('No active session found during initialization.');
 		setAuth(false); // explicitly set false, not null, so isLoading stops
