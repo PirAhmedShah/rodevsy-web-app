@@ -5,79 +5,34 @@
 	import SunIcon from '@lucide/svelte/icons/sun';
 	import MoonIcon from '@lucide/svelte/icons/moon';
 	import UserIcon from '@lucide/svelte/icons/user';
-	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import BriefcaseIcon from '@lucide/svelte/icons/briefcase';
-	import WalletIcon from '@lucide/svelte/icons/wallet';
 	import SettingsIcon from '@lucide/svelte/icons/settings';
 	import ShieldAlertIcon from '@lucide/svelte/icons/shield-alert';
 	import MenuIcon from '@lucide/svelte/icons/menu';
 	import XIcon from '@lucide/svelte/icons/x';
-	// resolve() is typed to known literal routes — use base + href for data-driven paths
 	import { base, resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { authState } from '$lib/state/auth.svelte';
+	import { userState } from '$lib/state/user.svelte';
 	import { logout } from '$lib/services/auth.service.js';
 
-	// ── Types ──────────────────────────────────────────────────────
-	interface NavLink {
-		readonly label: string;
-		readonly href: string;
-	}
-
-	interface TalentCategory {
-		readonly label: string;
-		readonly href: string;
-		readonly desc: string;
-	}
-
-	interface MenuItem {
-		readonly icon: typeof UserIcon;
-		readonly label: string;
-		readonly href: string;
-	}
-
 	// ── Static data — plain const, not reactive ────────────────────
-	const NAV_LINKS: NavLink[] = [
-		{ label: 'Marketplace', href: '/marketplace/' },
-		{ label: 'Projects', href: '/projects/' },
-		{ label: 'Forum', href: '/forum/' }
-	];
+	const NAV_LINKS = [{ label: 'Projects', href: '/projects/' }] as const;
 
-	const TALENT_CATEGORIES: TalentCategory[] = [
-		{
-			label: 'Scripters',
-			href: '/talent/',
-			desc: 'Hire verified Luau programmers for your game logic.'
-		},
-		{
-			label: 'Builders & Modelers',
-			href: '/talent/',
-			desc: 'Top-tier environment artists and 3D modelers.'
-		},
-		{
-			label: 'UI/UX Designers',
-			href: '/talent/',
-			desc: 'Create engaging and intuitive player interfaces.'
-		},
-		{ label: 'Animators', href: '/talent/', desc: 'Bring your characters and assets to life.' }
-	];
-
-	const USER_MENU_PRIMARY: MenuItem[] = [
+	const USER_MENU_PRIMARY = [
 		{ icon: UserIcon, label: 'Dashboard', href: '/dashboard/' },
 		{ icon: UserIcon, label: 'Public Profile', href: '/profile/' },
-		{ icon: WalletIcon, label: 'Wallet & Credits', href: '/wallet/' },
 		{ icon: SettingsIcon, label: 'Settings', href: '/settings/' }
-	];
+	] as const;
 
-	const USER_MENU_SECONDARY: MenuItem[] = [
+	const USER_MENU_SECONDARY = [
 		{ icon: BriefcaseIcon, label: 'Active Contracts', href: '/contracts/' },
 		{ icon: ShieldAlertIcon, label: 'Dispute Center', href: '/disputes/' }
-	];
+	] as const;
 
 	// ── Reactive state ─────────────────────────────────────────────
 	let mobileOpen = $state(false);
-	let talentOpen = $state(false);
 	let userMenuOpen = $state(false);
 
 	// ── Derived ────────────────────────────────────────────────────
@@ -98,8 +53,6 @@
 		await logout();
 	}
 
-	// Svelte action — must be applied to elements in the main template,
-	// NOT inside snippets (snippets are inert markup factories).
 	function clickOutside(node: HTMLElement, callback: () => void) {
 		function handle(e: MouseEvent) {
 			if (!node.contains(e.target as Node)) callback();
@@ -113,37 +66,6 @@
 	}
 </script>
 
-<!-- ── Snippets (no actions, no resolve() on dynamic hrefs) ─────── -->
-
-{#snippet talentFlyout()}
-	<!-- No use: here — the action lives on the wrapper div in the template -->
-	<div
-		class="absolute top-full left-0 z-50 mt-1 w-130 rounded-xl border border-border bg-card p-4 shadow-lg"
-	>
-		<p class="mb-3 px-1 text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
-			Browse by specialty
-		</p>
-		<ul class="grid grid-cols-2 gap-2">
-			{#each TALENT_CATEGORIES as cat (cat.label)}
-				<li>
-					<!-- base + href avoids the resolve() literal-type constraint -->
-					<a
-						href={base + cat.href}
-						onclick={() => {
-							talentOpen = false;
-							closeMobile();
-						}}
-						class="block rounded-lg p-3 transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-					>
-						<p class="text-sm font-medium text-foreground">{cat.label}</p>
-						<p class="mt-0.5 text-xs leading-snug text-muted-foreground">{cat.desc}</p>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
-{/snippet}
-
 {#snippet userMenu()}
 	<!-- No use: here — the action lives on the wrapper div in the template -->
 	<div
@@ -152,14 +74,17 @@
 		<div class="border-b border-border px-4 py-3">
 			<p class="text-sm font-semibold text-foreground">My Account</p>
 			<p class="mt-0.5 text-xs text-muted-foreground">
-				Balance: <span class="font-bold text-primary">0 CRD</span>
+				Balance:
+				<span class="font-bold text-primary"
+					>{userState.profile?.balance.toLocaleString() ?? 0} CRD</span
+				>
 			</p>
 		</div>
 
 		<div class="py-1">
 			{#each USER_MENU_PRIMARY as item (item.label)}
 				<a
-					href={base + item.href}
+					href={resolve(item.href)}
 					onclick={() => (userMenuOpen = false)}
 					class="flex items-center gap-3 px-4 py-2 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
 				>
@@ -172,7 +97,7 @@
 		<div class="border-t border-border py-1">
 			{#each USER_MENU_SECONDARY as item (item.label)}
 				<a
-					href={base + item.href}
+					href={resolve(item.href)}
 					onclick={() => (userMenuOpen = false)}
 					class="flex items-center gap-3 px-4 py-2 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
 				>
@@ -209,9 +134,8 @@
 
 			<nav class="hidden items-center gap-0.5 lg:flex" aria-label="Main navigation">
 				{#each NAV_LINKS as link (link.href)}
-					<!-- base + href for data-driven paths — resolve() only for inline literals -->
 					<a
-						href={base + link.href}
+						href={resolve(link.href)}
 						class={cn(
 							'rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
 							isActive(link.href) ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
@@ -220,35 +144,6 @@
 						{link.label}
 					</a>
 				{/each}
-
-				<!-- Talent dropdown — use:clickOutside lives here on the HTML element -->
-				<div class="relative" use:clickOutside={() => (talentOpen = false)}>
-					<button
-						onclick={() => (talentOpen = !talentOpen)}
-						aria-expanded={talentOpen}
-						aria-haspopup="true"
-						class={cn(
-							'flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-							isActive('/talent/') ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-						)}
-					>
-						Talent
-						<!-- style: directive is invalid on components — use inline style string -->
-						<span
-							style="display:contents; transform:{talentOpen
-								? 'rotate(180deg)'
-								: 'rotate(0deg)'}; transition:transform 200ms"
-						>
-							<ChevronDownIcon
-								class="size-3.5 transition-transform duration-200 {talentOpen ? 'rotate-180' : ''}"
-							/>
-						</span>
-					</button>
-
-					{#if talentOpen}
-						{@render talentFlyout()}
-					{/if}
-				</div>
 			</nav>
 		</div>
 
@@ -327,7 +222,7 @@
 			<div class="flex flex-col gap-0.5">
 				{#each NAV_LINKS as link (link.href)}
 					<a
-						href={base + link.href}
+						href={resolve(link.href)}
 						onclick={closeMobile}
 						class={cn(
 							'rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
@@ -337,33 +232,6 @@
 						{link.label}
 					</a>
 				{/each}
-
-				<!-- Talent sub-list on mobile (no use: needed — tap-away closes mobile drawer entirely) -->
-				<div>
-					<button
-						onclick={() => (talentOpen = !talentOpen)}
-						class="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-					>
-						Talent
-						<ChevronDownIcon
-							class="size-4 transition-transform duration-200 {talentOpen ? 'rotate-180' : ''}"
-						/>
-					</button>
-
-					{#if talentOpen}
-						<div class="mt-1 ml-3 flex flex-col gap-0.5 border-l border-border pl-3">
-							{#each TALENT_CATEGORIES as cat (cat.label)}
-								<a
-									href={base + cat.href}
-									onclick={closeMobile}
-									class="rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-								>
-									{cat.label}
-								</a>
-							{/each}
-						</div>
-					{/if}
-				</div>
 			</div>
 		</nav>
 	{/if}

@@ -88,13 +88,15 @@
 			const lower = msg.toLowerCase();
 
 			// Map NestJS validation messages to field keys
-			if (lower.includes('firstname') || lower.includes('first name')) fieldErrors.firstName = msg;
+			if (lower.includes('display')) fieldErrors.displayName = msg;
+			else if (lower.includes('firstname') || lower.includes('first name'))
+				fieldErrors.firstName = msg;
 			else if (lower.includes('lastname') || lower.includes('last name'))
 				fieldErrors.lastName = msg;
 			else if (lower.includes('username')) fieldErrors.username = msg;
 			else if (lower.includes('email')) fieldErrors.email = msg;
 			else if (lower.includes('password')) fieldErrors.password = msg;
-			else if (lower.includes('dob') || lower.includes('birth')) fieldErrors.dob = msg;
+			else if (lower.includes('dob') || lower.includes('birth')) fieldErrors.dateOfBirth = msg;
 			else if (lower.includes('type') || lower.includes('role')) fieldErrors.type = msg;
 			else if (lower.includes('gender')) fieldErrors.gender = msg;
 			else fieldErrors.general = msg;
@@ -162,6 +164,26 @@
 				{errors.general}
 			</div>
 		{/if}
+
+		<!-- Display Name -->
+		<Field>
+			<FieldLabel for="displayName-{id}">Display Name</FieldLabel>
+			<Input
+				id="displayName-{id}"
+				name="displayName"
+				placeholder="RoDev Pro"
+				minlength={2}
+				maxlength={32}
+				pattern="^[a-zA-Z0-9 '_-]+$"
+				title="Letters, numbers, spaces, underscores, and hyphens."
+				aria-invalid={!!errors.displayName}
+				oninput={() => clearError('displayName')}
+				required
+			/>
+			{#if errors.displayName}
+				<p class="text-xs text-destructive">{errors.displayName}</p>
+			{/if}
+		</Field>
 
 		<!-- Name -->
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -261,19 +283,19 @@
 			</Field>
 
 			<Field>
-				<FieldLabel for="dob-{id}">Date of Birth</FieldLabel>
+				<FieldLabel for="dateOfBirth-{id}">Date of Birth</FieldLabel>
 				<Input
-					id="dob-{id}"
-					name="dob"
+					id="dateOfBirth-{id}"
+					name="dateOfBirth"
 					type="date"
 					max={maxDate}
 					min={minDate}
-					aria-invalid={!!errors.dob}
-					onchange={() => clearError('dob')}
+					aria-invalid={!!errors.dateOfBirth}
+					onchange={() => clearError('dateOfBirth')}
 					required
 				/>
-				{#if errors.dob}
-					<p class="text-xs text-destructive">{errors.dob}</p>
+				{#if errors.dateOfBirth}
+					<p class="text-xs text-destructive">{errors.dateOfBirth}</p>
 				{/if}
 			</Field>
 		</div>

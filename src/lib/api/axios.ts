@@ -1,6 +1,6 @@
 // src/lib/api/axios.ts
 import axios, { type InternalAxiosRequestConfig, type AxiosError, type AxiosResponse } from 'axios';
-import type { refereshResponse } from '$lib/types/auth.type.js';
+import type { RefreshResponse } from '$lib/types/auth.type.js';
 
 // ── Access token store ───────────────────────────────────────────
 let accessToken: string | null = null;
@@ -92,7 +92,7 @@ api.interceptors.response.use(
 		isRefreshing = true;
 
 		try {
-			const { data } = await api.post<refereshResponse>('/auth/refresh');
+			const { data } = await api.post<RefreshResponse>('/auth/refresh');
 			setAccessToken(data);
 
 			if (originalRequest.headers) {
