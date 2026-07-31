@@ -88,7 +88,9 @@
 			const lower = msg.toLowerCase();
 
 			// Map NestJS validation messages to field keys
-			if (lower.includes('firstname') || lower.includes('first name')) fieldErrors.firstName = msg;
+			if (lower.includes('display')) fieldErrors.displayName = msg;
+			else if (lower.includes('firstname') || lower.includes('first name'))
+				fieldErrors.firstName = msg;
 			else if (lower.includes('lastname') || lower.includes('last name'))
 				fieldErrors.lastName = msg;
 			else if (lower.includes('username')) fieldErrors.username = msg;
@@ -162,6 +164,26 @@
 				{errors.general}
 			</div>
 		{/if}
+
+		<!-- Display Name -->
+		<Field>
+			<FieldLabel for="displayName-{id}">Display Name</FieldLabel>
+			<Input
+				id="displayName-{id}"
+				name="displayName"
+				placeholder="RoDev Pro"
+				minlength={2}
+				maxlength={32}
+				pattern="^[a-zA-Z0-9 '_-]+$"
+				title="Letters, numbers, spaces, underscores, and hyphens."
+				aria-invalid={!!errors.displayName}
+				oninput={() => clearError('displayName')}
+				required
+			/>
+			{#if errors.displayName}
+				<p class="text-xs text-destructive">{errors.displayName}</p>
+			{/if}
+		</Field>
 
 		<!-- Name -->
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">

@@ -54,6 +54,7 @@ export interface LoginPayload {
 }
 
 export interface SignupPayload {
+	displayName: string;
 	firstName: string;
 	lastName: string;
 	username: string;
