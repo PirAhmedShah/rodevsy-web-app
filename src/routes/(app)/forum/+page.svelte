@@ -1,1 +1,1 @@
-Empty page :)
+forum
